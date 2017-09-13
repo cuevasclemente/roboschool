@@ -1,22 +1,7 @@
 import gym, roboschool
+import dill as pickle
 import numpy as np
 
-def relu(x):
-    return np.maximum(x, 0)
-
-class SmallReactivePolicy:
-    "Simple multi-layer perceptron policy, no internal state"
-    def __init__(self, observation_space, action_space):
-        assert weights_dense1_w.shape == (observation_space.shape[0], 128)
-        assert weights_dense2_w.shape == (128, 64)
-        assert weights_final_w.shape  == (64, action_space.shape[0])
-
-    def act(self, ob):
-        x = ob
-        x = relu(np.dot(x, weights_dense1_w) + weights_dense1_b)
-        x = relu(np.dot(x, weights_dense2_w) + weights_dense2_b)
-        x = np.dot(x, weights_final_w) + weights_final_b
-        return x
 
 def demo_run():
     env = gym.make("RoboschoolHopper-v1")
@@ -266,5 +251,36 @@ weights_final_w = np.array([
 
 weights_final_b = np.array([ +0.4868, -0.0987, -0.0946])
 
+class SmallReactivePolicy:
+    "Simple multi-layer perceptron policy, no internal state"
+    def __init__(self, observation_space, action_space):
+        assert weights_dense1_w.shape == (observation_space.shape[0], 128)
+        assert weights_dense2_w.shape == (128, 64)
+        assert weights_final_w.shape  == (64, action_space.shape[0])
+        self.weights_dense1_w = weights_dense1_w
+        self.weights_dense2_w = weights_dense2_w
+        self.weights_dense1_b = weights_dense1_b
+        self.weights_dense2_b = weights_dense2_b
+        self.weights_final_w = weights_final_w
+        self.weights_final_b = weights_final_b
+
+    def relu(self, x):
+        return np.maximum(x, 0)
+
+    def act(self, ob):
+        x = ob
+        x = self.relu(np.dot(x, self.weights_dense1_w) + self.weights_dense1_b)
+        x = self.relu(np.dot(x, self.weights_dense2_w) + self.weights_dense2_b)
+        x = np.dot(x, self.weights_final_w) + self.weights_final_b
+        return x
+
+
+def pickle_model(output_location):
+    env = gym.make("RoboschoolHopper-v1")
+    pi = SmallReactivePolicy(env.observation_space, env.action_space)
+    with open(output_location, "wb") as f:
+        pickle.dump(pi, f)
+
 if __name__=="__main__":
-    demo_run()
+    pickle_model(output_location="../../../berkeleydeeplearning/homework/hw1/experts/RoboschoolHopper-v1.pkl")
+    # demo_run()

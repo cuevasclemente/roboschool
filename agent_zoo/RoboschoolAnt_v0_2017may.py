@@ -1,49 +1,9 @@
 import gym, roboschool
 import numpy as np
+import dill as pickle
 
 def relu(x):
     return np.maximum(x, 0)
-
-class SmallReactivePolicy:
-    "Simple multi-layer perceptron policy, no internal state"
-    def __init__(self, observation_space, action_space):
-        assert weights_dense1_w.shape == (observation_space.shape[0], 128)
-        assert weights_dense2_w.shape == (128, 64)
-        assert weights_final_w.shape  == (64, action_space.shape[0])
-
-    def act(self, ob):
-        x = ob
-        x = relu(np.dot(x, weights_dense1_w) + weights_dense1_b)
-        x = relu(np.dot(x, weights_dense2_w) + weights_dense2_b)
-        x = np.dot(x, weights_final_w) + weights_final_b
-        return x
-
-def demo_run():
-    env = gym.make("RoboschoolAnt-v1")
-    pi = SmallReactivePolicy(env.observation_space, env.action_space)
-
-    while 1:
-        frame = 0
-        score = 0
-        restart_delay = 0
-        obs = env.reset()
-
-        while 1:
-            a = pi.act(obs)
-            obs, r, done, _ = env.step(a)
-            score += r
-            frame += 1
-            still_open = env.render("human")
-            if still_open==False:
-                return
-            if not done: continue
-            if restart_delay==0:
-                print("score=%0.2f in %i frames" % (score, frame))
-                restart_delay = 60*2  # 2 sec at 60 fps
-            else:
-                restart_delay -= 1
-                if restart_delay==0: break
-
 weights_dense1_w = np.array([
 [ +0.2856, -0.4091, +0.3380, -0.1083, +0.1049, -0.0806, -0.0827, +0.0402, +0.2415, +0.0927, +0.1812, +0.5455, +0.3157, +0.1043, +0.0527, +0.3768, -0.2083, +0.1218, -0.0633, +0.3236, +0.2198, +0.0513, +0.3505, -0.1165, -0.1732, +0.2760, +0.0006, +0.0249, +0.5887, -0.2324, +0.1503, -0.0108, +0.1220, +0.2527, +0.0984, +0.5360, -0.0579, -0.0847, +0.1649, +0.0589, -0.2046, +0.5981, -0.1063, -0.1088, +0.3424, +0.3479, -0.1751, +0.2924, -0.0610, +0.0807, +0.3291, +0.0059, +0.0339, -0.2823, +0.2533, +0.3156, +0.1679, +0.2417, +0.1265, +0.0024, +0.0802, +0.2531, -0.2576, +0.3894, +0.3206, +0.2015, +0.3482, +0.1042, -0.2418, -0.0002, +0.1277, +0.1811, +0.1551, +0.5460, +0.1714, +0.1021, -0.1252, +0.0609, -0.0372, -0.0351, +0.1216, +0.0023, -0.2448, +0.0077, +0.0584, +0.2389, -0.0848, +0.3542, +0.3065, -0.2268, +0.2387, +0.3303, +0.4184, -0.1619, +0.2230, +0.2829, +0.3884, +0.1262, +0.6383, -0.1629, +0.3087, +0.0554, +0.2294, +0.0280, +0.4139, -0.1484, +0.1358, +0.3153, -0.2652, +0.2637, -0.1563, +0.0706, +0.4192, +0.2381, -0.3540, +0.2789, +0.2647, +0.0931, +0.1439, +0.3415, -0.2445, +0.1039, -0.3692, +0.5095, +0.0010, +0.0777, +0.3382, -0.1100],
 [ +0.0820, +0.6327, +1.0135, -0.1423, -0.0275, +0.0396, -0.5933, +0.3027, -0.2220, +0.1476, -0.0591, -0.7910, -0.0776, +0.2565, +0.0241, -1.1300, +0.1324, +0.9079, +0.2318, +0.5574, +1.0162, +0.1408, +0.7525, +0.3612, +0.6088, -0.2541, +0.8134, +0.1348, -0.1265, +0.7991, -0.2304, -0.4826, -0.4123, +0.2831, -0.5457, -0.3518, -0.9733, -0.1654, +0.2409, +0.3971, +0.6624, +0.0728, +0.2200, -0.2126, -0.5299, -0.1858, -0.3467, -0.2776, -0.2004, -0.7567, +0.4417, -0.4378, -0.6799, +0.3789, +0.2937, -0.1247, +0.5540, -1.0124, -0.5759, +0.0308, +0.2971, +1.1300, -0.1185, +0.5303, +0.0527, +0.3392, +0.7436, -0.3578, -0.0559, +0.2165, -0.5860, +0.9427, -0.2522, -0.0805, +0.9314, +1.4173, +0.6216, +0.6923, +0.6592, -0.0457, +0.5152, -0.3523, -0.5135, +0.6466, -0.4804, +0.0006, +0.3223, -0.1548, +1.5508, +0.6204, +0.2618, -0.0392, -0.6208, +0.0237, +0.0577, -0.2913, -0.3893, -0.1459, -0.1103, +0.7485, -0.0045, +0.0640, +0.0726, -0.0966, +0.0452, +0.2741, -0.3389, +0.8830, +0.9819, +0.3915, -0.1127, -0.2653, -0.6842, +0.2389, -0.4349, +1.4013, -0.4442, +1.1846, -0.7550, +0.5812, -0.2940, +0.7046, +0.4730, -0.2155, +0.1432, +0.1518, +0.5336, -0.0827],
@@ -279,5 +239,61 @@ weights_final_w = np.array([
 
 weights_final_b = np.array([ -0.0680, +0.1401, -0.0628, -0.1317, +0.1489, +0.1844, -0.1147, +0.0137])
 
+class SmallReactivePolicy:
+    "Simple multi-layer perceptron policy, no internal state"
+    def __init__(self, observation_space, action_space):
+        assert weights_dense1_w.shape == (observation_space.shape[0], 128)
+        assert weights_dense2_w.shape == (128, 64)
+        assert weights_final_w.shape  == (64, action_space.shape[0])
+        self.weights_dense1_w = weights_dense1_w
+        self.weights_dense2_w = weights_dense2_w
+        self.weights_dense1_b = weights_dense1_b
+        self.weights_dense2_b = weights_dense2_b
+        self.weights_final_w = weights_final_w
+        self.weights_final_b = weights_final_b
+
+    def relu(self, x):
+        return np.maximum(x, 0)
+
+    def act(self, ob):
+        x = ob
+        x = self.relu(np.dot(x, self.weights_dense1_w) + self.weights_dense1_b)
+        x = self.relu(np.dot(x, self.weights_dense2_w) + self.weights_dense2_b)
+        x = np.dot(x, self.weights_final_w) + self.weights_final_b
+        return x
+
+def demo_run():
+    env = gym.make("RoboschoolAnt-v1")
+    pi = SmallReactivePolicy(env.observation_space, env.action_space)
+
+    while 1:
+        frame = 0
+        score = 0
+        restart_delay = 0
+        obs = env.reset()
+
+        while 1:
+            a = pi.act(obs)
+            obs, r, done, _ = env.step(a)
+            score += r
+            frame += 1
+            still_open = env.render("human")
+            if still_open==False:
+                return
+            if not done: continue
+            if restart_delay==0:
+                print("score=%0.2f in %i frames" % (score, frame))
+                restart_delay = 60*2  # 2 sec at 60 fps
+            else:
+                restart_delay -= 1
+                if restart_delay==0: break
+
+def pickle_model(output_location):
+    env = gym.make("RoboschoolAnt-v1")
+    pi = SmallReactivePolicy(env.observation_space, env.action_space)
+    with open(output_location, "wb") as f:
+        pickle.dump(pi, f)
+
 if __name__=="__main__":
-    demo_run()
+    pickle_model(output_location="../../../berkeleydeeplearning/homework/hw1/experts/RoboschoolAnt-v1.pkl")
+    # demo_run()
